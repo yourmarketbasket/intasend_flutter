@@ -75,7 +75,7 @@ class _IntasendWebViewState extends State<IntasendWebView> {
           ),
         ),
         body: isLoading ?   Center(child: CircularProgressIndicator(strokeWidth: 1, valueColor: AlwaysStoppedAnimation<Color>(Colors.black), backgroundColor: Colors.grey,)) : Column(
-              mainAxisSize: MainAxisSize.max,
+              mainAxisSize: MainAxisSize.min,
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 WebViewWidget(controller: controller),
