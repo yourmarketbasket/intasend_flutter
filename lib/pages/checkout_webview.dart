@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:webview_flutter/webview_flutter.dart';
+import 'package:flutter/services.dart'; // Add this import for SystemChrome
 
 class IntasendWebView extends StatefulWidget {
   final String url;
@@ -17,6 +18,13 @@ class _IntasendWebViewState extends State<IntasendWebView> {
   @override
   void initState() {
     super.initState();
+
+    // Set status bar color to white and icons to dark
+    SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
+      statusBarColor: Colors.white, // White status bar
+      statusBarIconBrightness: Brightness.dark, // Dark icons for visibility
+      statusBarBrightness: Brightness.light, // For iOS: ensures dark icons
+    ));
 
     controller = WebViewController()
       ..setJavaScriptMode(JavaScriptMode.unrestricted)
@@ -50,6 +58,17 @@ class _IntasendWebViewState extends State<IntasendWebView> {
   }
 
   @override
+  void dispose() {
+    // Optionally reset status bar style when leaving the screen
+    SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
+      statusBarColor: Colors.transparent,
+      statusBarIconBrightness: Brightness.light,
+      statusBarBrightness: Brightness.dark,
+    ));
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
@@ -75,23 +94,22 @@ class _IntasendWebViewState extends State<IntasendWebView> {
           ),
         ),
         body: isLoading
-    ? Center(
-        child: CircularProgressIndicator(
-          strokeWidth: 1,
-          valueColor: AlwaysStoppedAnimation<Color>(Colors.black),
-          backgroundColor: Colors.grey,
-        ),
-      )
-    : Column(
-        mainAxisSize: MainAxisSize.min,
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Expanded(
-            child: WebViewWidget(controller: controller),
-          ),
-        ],
-      ),
-        
+            ? Center(
+                child: CircularProgressIndicator(
+                  strokeWidth: 1,
+                  valueColor: AlwaysStoppedAnimation<Color>(Colors.black),
+                  backgroundColor: Colors.grey,
+                ),
+              )
+            : Column(
+                mainAxisSize: MainAxisSize.min,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Expanded(
+                    child: WebViewWidget(controller: controller),
+                  ),
+                ],
+              ),
       ),
     );
   }
