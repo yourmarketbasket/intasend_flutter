@@ -73,46 +73,15 @@ class _IntasendWebViewState extends State<IntasendWebView> {
               Navigator.pop(context);
             },
           ),
-          actions: [
-            IconButton(
-              icon: const Icon(
-                Icons.refresh,
-                color: Colors.black87,
-              ),
-              onPressed: () {
-                controller.reload();
-              },
-            ),
-          ],
         ),
-        body: Stack(
-          children: [
-            Center(
-              child: WebViewWidget(controller: controller),
-            ),
-            if (isLoading)
-              const Center(
-                child: CircularProgressIndicator(
-                  valueColor: AlwaysStoppedAnimation<Color>(Colors.blue),
-                ),
-              ),
-          ],
-        ),
-        bottomNavigationBar: BottomAppBar(
-          color: Colors.white,
-          elevation: 8,
-          child: Padding(
-            padding: const EdgeInsets.symmetric(vertical: 8.0),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
+        body: isLoading ?   Center(child: CircularProgressIndicator(strokeWidth: 1, valueColor: AlwaysStoppedAnimation<Color>(Colors.black), backgroundColor: Colors.grey,)) : Column(
+              mainAxisSize: MainAxisSize.max,
+              mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                _buildNavButton(Icons.arrow_back_ios, () => controller.goBack()),
-                _buildNavButton(Icons.arrow_forward_ios, () => controller.goForward()),
-                _buildNavButton(Icons.refresh, () => controller.reload()),
+                WebViewWidget(controller: controller),
               ],
             ),
-          ),
-        ),
+        
       ),
     );
   }
