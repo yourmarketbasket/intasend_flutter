@@ -12,7 +12,7 @@ class IntasendWebView extends StatefulWidget {
 
 class _IntasendWebViewState extends State<IntasendWebView> {
   late WebViewController controller;
-  bool isLoading = false;
+  bool isLoading = true;
 
   @override
   void initState() {
@@ -20,30 +20,26 @@ class _IntasendWebViewState extends State<IntasendWebView> {
 
     controller = WebViewController()
       ..setJavaScriptMode(JavaScriptMode.unrestricted)
-      ..setBackgroundColor(const Color(0x00000000))
+      ..setBackgroundColor(Colors.transparent)
       ..setNavigationDelegate(
         NavigationDelegate(
           onProgress: (int progress) {
-            if (progress == 100) {
-              setState(() {
-                isLoading = false;
-              });
-            } else {
-              if (!isLoading) {
-                setState(() {
-                  isLoading = true;
-                });
-              }
-            }
+            setState(() {
+              isLoading = progress < 100;
+            });
           },
-          onPageStarted: (String url) {},
+          onPageStarted: (String url) {
+            setState(() {
+              isLoading = true;
+            });
+          },
           onPageFinished: (String url) {
             setState(() {
               isLoading = false;
             });
           },
           onWebResourceError: (WebResourceError error) {
-            debugPrint(error.url);
+            debugPrint('WebView Error: ${error.description}');
           },
           onNavigationRequest: (NavigationRequest request) {
             return NavigationDecision.navigate;
@@ -58,56 +54,83 @@ class _IntasendWebViewState extends State<IntasendWebView> {
     return SafeArea(
       child: Scaffold(
         appBar: AppBar(
-          title: const Text('Checkout'),
+          title: const Text(
+            'Checkout',
+            style: TextStyle(
+              fontWeight: FontWeight.w600,
+              fontSize: 20,
+            ),
+          ),
           centerTitle: true,
           backgroundColor: Colors.white,
+          elevation: 0,
           leading: IconButton(
-            icon: const Icon(Icons.arrow_back_ios),
+            icon: const Icon(
+              Icons.arrow_back,
+              color: Colors.black87,
+            ),
             onPressed: () {
               Navigator.pop(context);
             },
           ),
           actions: [
             IconButton(
-              icon: const Icon(Icons.refresh),
+              icon: const Icon(
+                Icons.refresh,
+                color: Colors.black87,
+              ),
               onPressed: () {
                 controller.reload();
               },
             ),
-            
           ],
         ),
-        body: isLoading
-            ? const Center(child: CircularProgressIndicator())
-            : Center(child: WebViewWidget(controller: controller)),
+        body: Stack(
+          children: [
+            Center(
+              child: WebViewWidget(controller: controller),
+            ),
+            if (isLoading)
+              const Center(
+                child: CircularProgressIndicator(
+                  valueColor: AlwaysStoppedAnimation<Color>(Colors.blue),
+                ),
+              ),
+          ],
+        ),
         bottomNavigationBar: BottomAppBar(
           color: Colors.white,
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            mainAxisSize: MainAxisSize.max,
-            children: <Widget>[
-              IconButton(
-                icon: const Icon(Icons.arrow_back_ios),
-                onPressed: () {
-                  controller.goBack();
-                },
-              ),
-              IconButton(
-                icon: const Icon(Icons.arrow_forward_ios),
-                onPressed: () {
-                  controller.goForward();
-                },
-              ),
-              IconButton(
-                icon: const Icon(Icons.autorenew),
-                onPressed: () {
-                  controller.reload();
-                },
-              ),
-            ],
+          elevation: 8,
+          child: Padding(
+            padding: const EdgeInsets.symmetric(vertical: 8.0),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: [
+                _buildNavButton(Icons.arrow_back_ios, () => controller.goBack()),
+                _buildNavButton(Icons.arrow_forward_ios, () => controller.goForward()),
+                _buildNavButton(Icons.refresh, () => controller.reload()),
+              ],
+            ),
           ),
         ),
       ),
-    ); 
+    );
+  }
+
+  Widget _buildNavButton(IconData icon, VoidCallback onPressed) {
+    return IconButton(
+      icon: Icon(
+        icon,
+        color: Colors.black87,
+        size: 24,
+      ),
+      onPressed: onPressed,
+      splashRadius: 24,
+      tooltip: icon == Icons.arrow_back_ios
+          ? 'Back'
+          : icon == Icons.arrow_forward_ios
+              ? 'Forward'
+              : 'Reload',
+    );
   }
 }
