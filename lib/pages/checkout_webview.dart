@@ -55,32 +55,57 @@ class _IntasendWebViewState extends State<IntasendWebView> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: isLoading
-          ? const Center(child: CircularProgressIndicator())
-          : WebViewWidget(controller: controller),
-      bottomNavigationBar: BottomAppBar(
-        child: Row(
-          children: <Widget>[
+    return SafeArea(
+      child: Scaffold(
+        appBar: AppBar(
+          title: const Text('Checkout'),
+          centerTitle: true,
+          backgroundColor: Colors.white,
+          leading: IconButton(
+            icon: const Icon(Icons.arrow_back_ios),
+            onPressed: () {
+              Navigator.pop(context);
+            },
+          ),
+          actions: [
             IconButton(
-              icon: const Icon(Icons.arrow_back_ios),
-              onPressed: () {
-                controller.goBack();
-              },
-            ),
-            IconButton(
-              icon: const Icon(Icons.arrow_forward_ios),
-              onPressed: () {
-                controller.goForward();
-              },
-            ),
-            IconButton(
-              icon: const Icon(Icons.autorenew),
+              icon: const Icon(Icons.refresh),
               onPressed: () {
                 controller.reload();
               },
             ),
+            
           ],
+        ),
+        body: isLoading
+            ? const Center(child: CircularProgressIndicator())
+            : WebViewWidget(controller: controller),
+        bottomNavigationBar: BottomAppBar(
+          color: Colors.white,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            mainAxisSize: MainAxisSize.max,
+            children: <Widget>[
+              IconButton(
+                icon: const Icon(Icons.arrow_back_ios),
+                onPressed: () {
+                  controller.goBack();
+                },
+              ),
+              IconButton(
+                icon: const Icon(Icons.arrow_forward_ios),
+                onPressed: () {
+                  controller.goForward();
+                },
+              ),
+              IconButton(
+                icon: const Icon(Icons.autorenew),
+                onPressed: () {
+                  controller.reload();
+                },
+              ),
+            ],
+          ),
         ),
       ),
     ); 
