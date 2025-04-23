@@ -79,7 +79,7 @@ class _IntasendWebViewState extends State<IntasendWebView> {
         ),
         body: isLoading
             ? const Center(child: CircularProgressIndicator())
-            : WebViewWidget(controller: controller),
+            : Center(child: WebViewWidget(controller: controller)),
         bottomNavigationBar: BottomAppBar(
           color: Colors.white,
           child: Row(
